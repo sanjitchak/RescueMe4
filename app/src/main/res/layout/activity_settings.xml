@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kavya.rescueme4.MainActivity">
+    tools:context="com.example.kavya.rescueme4.SettingsActivity">
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -41,23 +41,5 @@
             android:ems="10"
             android:inputType="textPersonName" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/savebutton"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="150dp"
-            android:onClick="getData"
-            android:text="Button" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/savebutton"
-            android:layout_below="@+id/savebutton"
-            android:layout_marginTop="78dp"
-            android:text="TextView" />
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

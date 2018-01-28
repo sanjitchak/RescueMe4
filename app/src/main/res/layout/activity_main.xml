@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kavya.rescueme4.Main2Activity">
+    tools:context="com.example.kavya.rescueme4.MainActivity">
 
     <Button
         android:id="@+id/button"
@@ -22,7 +22,8 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="104dp"
+        android:layout_marginBottom="135dp"
+        android:layout_marginLeft="150dp"
         android:layout_marginStart="112dp"
         android:text="Button"
         app:layout_constraintBottom_toBottomOf="parent"
