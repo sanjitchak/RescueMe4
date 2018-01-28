@@ -15,11 +15,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loginData = getSharedPreferences("name", Context.MODE_PRIVATE);
-        userName = (EditText) findViewById(R.id.nameInput);
 
 
         setContentView(R.layout.activity_settings);
+        loginData = getSharedPreferences("name", Context.MODE_PRIVATE);
+        userName = (EditText) findViewById(R.id.nameInput);
 
 
     }
@@ -28,9 +28,9 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = loginData.edit();
 
         if(userName.getText().toString().matches(""))
-         Toast.makeText(this,"Put a Name",Toast.LENGTH_LONG).show();
+         Toast.makeText(this,"Put a Name",Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(this,"Name Saved",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Name Saved",Toast.LENGTH_SHORT).show();
 
        editor.putString("name", userName.getText().toString());
 
@@ -38,13 +38,13 @@ public class SettingsActivity extends AppCompatActivity {
          userName.setText("");
 
     }
-/*
+
    public void getData(View view){
-        SharedPreferences loginData = getSharedPreferences("name", Context.MODE_PRIVATE);
+
         String name = loginData.getString("name", "");
-       // String pw = loginData.getString("password","");
-        String msg = "Saved User Name: " + name ;
-        dataView.setText(msg);
-    }*/
+
+        String msg = "Saved Name: " + name ;
+       Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
 
 }
