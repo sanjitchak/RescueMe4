@@ -56,21 +56,6 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(startMain);
     }
 
-    public void saveData(View view) {
-
-        SharedPreferences.Editor editor = loginData.edit();
-
-        if (userName.getText().toString().matches(""))
-            Toast.makeText(this, "Put a Name", Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this, "Name Saved", Toast.LENGTH_SHORT).show();
-
-        editor.putString("name", userName.getText().toString());
-
-        editor.apply();
-        userName.setText("");
-
-    }
 
     public void pickContactOne(View view) {
 
@@ -153,26 +138,20 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public void getData(View view) {
 
-        String name = loginData.getString("name", "");
 
-        String msg = "Saved Name: " + name;
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
-    public void saveContacts(View view) {
-        Toast.makeText(this, "Contacts Saved", Toast.LENGTH_SHORT).show();
+    public void saveContactsName(View view) {
+       // Toast.makeText(this, "Contacts Saved", Toast.LENGTH_SHORT).show();
         SharedPreferences.Editor editor = loginData.edit();
         editor.putString("contactOne", contactOneText.getText().toString());
         editor.putString("contactTwo", contactTwoText.getText().toString());
         editor.putString("contactThree", contactThreeText.getText().toString());
-
+        editor.putString("name", userName.getText().toString());
         editor.apply();
-
+        goToMain( );
     }
 
-    public void goToMain(View view) {
+    public void goToMain( ) {
         String name = loginData.getString("name", "");
         String contactOne = loginData.getString("contactOne", "");
 
