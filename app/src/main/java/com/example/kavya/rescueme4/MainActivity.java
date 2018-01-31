@@ -24,6 +24,9 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     String longitude;
     String cityName ;
     String postalCode;
+    Button rescueMe; //for animation
     //gps location part
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
@@ -77,22 +81,38 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
         String longitude = null;
         String cityName = null;
         String postalCode = null;
-
-        //Requesting permissions
-        String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.SEND_SMS,Manifest.permission.READ_CONTACTS,Manifest.permission.ACCESS_COARSE_LOCATION};
+        requestPermission();
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-            for (String permission : PERMISSIONS) {
-                if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this,
-                            PERMISSIONS,
-                            1);
-                }
-            }
+            requestPermission();
         }
-
+        rescueMe = (Button) findViewById(R.id.rescueMe);
         //latitudeText = (TextView) findViewById(R.id.latitudeText);
     }
 
+public void requestPermission()
+{
+    //Requesting permissions
+    String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.SEND_SMS,Manifest.permission.READ_CONTACTS,Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        for (String permission : PERMISSIONS) {
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        PERMISSIONS,
+                        1);
+            }
+        }
+
+}
+public boolean permissionBoolean()
+{String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.SEND_SMS,Manifest.permission.READ_CONTACTS,Manifest.permission.ACCESS_COARSE_LOCATION};
+
+    for (String permission : PERMISSIONS) {
+        if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+             return false;
+        }
+    }
+    return true;
+}
 
     private void showAlert() {
 
@@ -133,15 +153,23 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
         //continue looping before it gets value
        while(latitude==null || longitude==null || cityName ==null || postalCode == null )
        {
-
+           if(!permissionBoolean() ) {
+               //shake horizontal
+               Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+               rescueMe.startAnimation(shake);
+               return;
+           }
        }
+       //shake vertical
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shakey);
+        rescueMe.startAnimation(shake);
         if(!contactOne.matches(""))
  sendSMS(contactOne, "Hi! This is "+name+". "+"HELP ME!\nMy Coordinates: "+latitude+" , "+longitude+"\n"+"City Name: "+cityName+"\n"+"Postal Code: "+postalCode);
 
-        if(!contactTwo.matches(""))
+        if(!contactTwo.matches("") )
             sendSMS(contactTwo, "Hi! This is "+name+". "+"HELP ME!\nMy Coordinates: "+latitude+" , "+longitude+"\n"+"City Name: "+cityName+"\n"+"Postal Code: "+postalCode);
 
-        if(!contactThree.matches(""))
+        if(!contactThree.matches("") )
             sendSMS(contactThree, "Hi! This is "+name+". "+"HELP ME!\nMy Coordinates: "+latitude+" , "+longitude+"\n"+"City Name: "+cityName+"\n"+"Postal Code: "+postalCode);
 
     }
