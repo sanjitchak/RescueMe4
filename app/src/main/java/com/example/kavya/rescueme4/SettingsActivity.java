@@ -47,6 +47,14 @@ public class SettingsActivity extends AppCompatActivity {
         contactType = 0;
 
     }
+    @Override
+    public void onBackPressed() {
+        //go to HOME screen
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
+    }
 
     public void saveData(View view) {
 
