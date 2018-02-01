@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,7 +45,9 @@ public class SettingsActivity extends AppCompatActivity {
         contactOneText.setText(contactOne);
         contactTwoText.setText(contactTwo);
         contactThreeText.setText(contactThree);
-        contactType = 0;
+        contactType = 0; //for picking contacts
+
+
 
     }
     @Override

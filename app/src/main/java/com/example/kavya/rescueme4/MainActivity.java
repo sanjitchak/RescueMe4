@@ -11,8 +11,11 @@ import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -53,14 +56,37 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     String cityName;
     String postalCode;
     Button rescueMe; //for animation
+    Handler waitMsgHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            SharedPreferences loginData = getSharedPreferences("name", Context.MODE_PRIVATE);
+            final String name = loginData.getString("name", "");
+            final String contactOne = loginData.getString("contactOne", "");
+            final String contactTwo = loginData.getString("contactTwo", "");
+            final String contactThree = loginData.getString("contactThree", "");
+
+            Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shakey);
+            rescueMe.startAnimation(shake);
+            if (!contactOne.matches(""))
+                sendSMS(contactOne, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+            if (!contactTwo.matches(""))
+                sendSMS(contactTwo, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+            if (!contactThree.matches(""))
+                sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+            Toast.makeText(MainActivity.this,"Message Sent",Toast.LENGTH_SHORT).show();
+        }
+    };
     //gps location part
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
     private LocationManager locationManager;
     private LocationRequest mLocationRequest;
     private com.google.android.gms.location.LocationListener listener;
-    private long UPDATE_INTERVAL = 3600000;  /* 60 min */
-    private long FASTEST_INTERVAL = 60000; /* 1 min */
+    private long UPDATE_INTERVAL = 2 * 1000;  /* 10 sec */
+    private long FASTEST_INTERVAL = 2000; /* 2 sec */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,13 +101,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addApi(LocationServices.API)
                 .build();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-            showAlert();
+
         latitude = "";
         longitude = "";
         cityName = "";
         postalCode = "";
-        requestPermission();
+
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermission();
         }
@@ -118,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         startActivity(myIntent);
-        Toast.makeText(this, "ENABLE LOCATION, INTERNET & SET LOCATION TO HIGH ACCURACY", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "enable LOCATION, INTERNET & set to HIGH ACCURACY", Toast.LENGTH_LONG).show();
 
     }
 
@@ -138,37 +163,68 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void rescueMe(View view) {
-
+        //if no gps
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             showAlert();
             return;
 
         }
         SharedPreferences loginData = getSharedPreferences("name", Context.MODE_PRIVATE);
-        String name = loginData.getString("name", "");
-        String contactOne = loginData.getString("contactOne", "");
-        String contactTwo = loginData.getString("contactTwo", "");
-        String contactThree = loginData.getString("contactThree", "");
-      //  while (!permissionBoolean() || latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")) {
-            if (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")) {
+        final String name = loginData.getString("name", "");
+        final String contactOne = loginData.getString("contactOne", "");
+        final String contactTwo = loginData.getString("contactTwo", "");
+        final String contactThree = loginData.getString("contactThree", "");
+        //if else
+             if (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")) {
                 //shake horizontal
                 Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
                 rescueMe.startAnimation(shake);
 
-                return;
+                 Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        // What do you want the thread to do
+
+
+                        while (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")){
+                            // Don't need to sync when you are not using a thread e,g, Tutorial 39
+                            synchronized(this){
+                                try {
+                                    Log.i(TAG, "Thread");
+                                    //wait(futureTime - System.currentTimeMillis());
+                                }catch(Exception e){}
+                            }
+                        }
+
+                        waitMsgHandler.sendEmptyMessage(0);
+
+
+
+                    }
+                };
+
+                Thread waitThread = new Thread(r);
+                waitThread.start();
+ Toast.makeText(this,"GPS not ready. We will send it. DON'T press again",Toast.LENGTH_SHORT).show();
+
+
+            }
+            else
+            {
+                Animation shake = AnimationUtils.loadAnimation(this, R.anim.shakey);
+                rescueMe.startAnimation(shake);
+                if (!contactOne.matches(""))
+                    sendSMS(contactOne, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+                if (!contactTwo.matches(""))
+                    sendSMS(contactTwo, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+                if (!contactThree.matches(""))
+                    sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+                Toast.makeText(this,"Message Sent",Toast.LENGTH_SHORT).show();
             }
 
-
-        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shakey);
-        rescueMe.startAnimation(shake);
-        if (!contactOne.matches(""))
-            sendSMS(contactOne, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
-
-        if (!contactTwo.matches(""))
-            sendSMS(contactTwo, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
-
-        if (!contactThree.matches(""))
-            sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
     }
 
