@@ -44,13 +44,13 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MainActivity extends AppCompatActivity  implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     public static final String TAG = "somuTag";
-    LocationManager manager ;
+    LocationManager manager;
     TextView latitudeText;
     String latitude;
     String longitude;
-    String cityName ;
+    String cityName;
     String postalCode;
     Button rescueMe; //for animation
     //gps location part
@@ -59,15 +59,15 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
     private LocationManager locationManager;
     private LocationRequest mLocationRequest;
     private com.google.android.gms.location.LocationListener listener;
-    private long UPDATE_INTERVAL = 2 * 1000;  /* 10 secs */
-    private long FASTEST_INTERVAL = 2000; /* 2 sec */
+    private long UPDATE_INTERVAL = 3600000;  /* 60 min */
+    private long FASTEST_INTERVAL = 60000; /* 1 min */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -76,23 +76,22 @@ public class MainActivity extends AppCompatActivity  implements GoogleApiClient.
                 .build();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-             showAlert();
-        String latitude = null;
-        String longitude = null;
-        String cityName = null;
-        String postalCode = null;
+            showAlert();
+        latitude = "";
+        longitude = "";
+        cityName = "";
+        postalCode = "";
         requestPermission();
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermission();
         }
         rescueMe = (Button) findViewById(R.id.rescueMe);
         //latitudeText = (TextView) findViewById(R.id.latitudeText);
     }
 
-public void requestPermission()
-{
-    //Requesting permissions
-    String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.SEND_SMS,Manifest.permission.READ_CONTACTS,Manifest.permission.ACCESS_COARSE_LOCATION};
+    public void requestPermission() {
+        //Requesting permissions
+        String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION};
 
         for (String permission : PERMISSIONS) {
             if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -102,25 +101,27 @@ public void requestPermission()
             }
         }
 
-}
-public boolean permissionBoolean()
-{String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.SEND_SMS,Manifest.permission.READ_CONTACTS,Manifest.permission.ACCESS_COARSE_LOCATION};
-
-    for (String permission : PERMISSIONS) {
-        if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-             return false;
-        }
     }
-    return true;
-}
+
+    public boolean permissionBoolean() {
+        String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        for (String permission : PERMISSIONS) {
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private void showAlert() {
 
-                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(myIntent);
-        Toast.makeText(this, "ENABLE LOCATION & SET LOCATION TO HIGH ACCURACY", Toast.LENGTH_LONG).show();
+        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(myIntent);
+        Toast.makeText(this, "ENABLE LOCATION, INTERNET & SET LOCATION TO HIGH ACCURACY", Toast.LENGTH_LONG).show();
 
     }
+
     @Override
     public void onBackPressed() {
         //go to HOME screen
@@ -130,15 +131,13 @@ public boolean permissionBoolean()
         startActivity(startMain);
     }
 
-    public void backToSettings (View view)
-    {
+    public void backToSettings(View view) {
         Intent I = new Intent(this, SettingsActivity.class);
 
         startActivity(I);
     }
 
-    public void rescueMe(View view)
-    {
+    public void rescueMe(View view) {
 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             showAlert();
@@ -147,32 +146,32 @@ public boolean permissionBoolean()
         }
         SharedPreferences loginData = getSharedPreferences("name", Context.MODE_PRIVATE);
         String name = loginData.getString("name", "");
-        String contactOne = loginData.getString("contactOne","");
-        String contactTwo = loginData.getString("contactTwo","");
-        String contactThree = loginData.getString("contactThree","");
-        //continue looping before it gets value
-       while(latitude==null || longitude==null || cityName ==null || postalCode == null )
-       {
-           if(!permissionBoolean() ) {
-               //shake horizontal
-               Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-               rescueMe.startAnimation(shake);
-               return;
-           }
-       }
-       //shake vertical
+        String contactOne = loginData.getString("contactOne", "");
+        String contactTwo = loginData.getString("contactTwo", "");
+        String contactThree = loginData.getString("contactThree", "");
+      //  while (!permissionBoolean() || latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")) {
+            if (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")) {
+                //shake horizontal
+                Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+                rescueMe.startAnimation(shake);
+
+                return;
+            }
+
+
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shakey);
         rescueMe.startAnimation(shake);
-        if(!contactOne.matches(""))
- sendSMS(contactOne, "Hi! This is "+name+". "+"HELP ME!\nMy Coordinates: "+latitude+" , "+longitude+"\n"+"City Name: "+cityName+"\n"+"Postal Code: "+postalCode);
+        if (!contactOne.matches(""))
+            sendSMS(contactOne, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
-        if(!contactTwo.matches("") )
-            sendSMS(contactTwo, "Hi! This is "+name+". "+"HELP ME!\nMy Coordinates: "+latitude+" , "+longitude+"\n"+"City Name: "+cityName+"\n"+"Postal Code: "+postalCode);
+        if (!contactTwo.matches(""))
+            sendSMS(contactTwo, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
-        if(!contactThree.matches("") )
-            sendSMS(contactThree, "Hi! This is "+name+". "+"HELP ME!\nMy Coordinates: "+latitude+" , "+longitude+"\n"+"City Name: "+cityName+"\n"+"Postal Code: "+postalCode);
+        if (!contactThree.matches(""))
+            sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
     }
+
     public void onConnected(Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -183,18 +182,18 @@ public boolean permissionBoolean()
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             return;
-        } startLocationUpdates();
+        }
+        startLocationUpdates();
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if(mLocation == null){
+        if (mLocation == null) {
             startLocationUpdates();
         }
         if (mLocation != null) {
 
             double latitude = mLocation.getLatitude();
             double longitude = mLocation.getLongitude();
-            this.longitude=Double.toString(longitude);
+            this.longitude = Double.toString(longitude);
             this.latitude = Double.toString(latitude);
-
 
 
         } else {
@@ -202,6 +201,7 @@ public boolean permissionBoolean()
         }
 
     }
+
     private void sendSMS(String phoneNumber, String message) {
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(phoneNumber, null, message, null, null);
@@ -211,7 +211,7 @@ public boolean permissionBoolean()
     protected void startLocationUpdates() {
         // Create the location request
         mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
                 .setInterval(UPDATE_INTERVAL)
                 .setFastestInterval(FASTEST_INTERVAL);
         // Request location updates
@@ -254,6 +254,7 @@ public boolean permissionBoolean()
             mGoogleApiClient.disconnect();
         }
     }
+
     @Override
     public void onLocationChanged(Location location) {
         Geocoder gcd = new Geocoder(getBaseContext(),
@@ -261,10 +262,9 @@ public boolean permissionBoolean()
         List<android.location.Address> addresses;
         try {
             addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            if (addresses.size() > 0)
-            {   //System.out.println(addresses.get(0).getLocality());
-           // latitudeText.setText(addresses.get(0).getPostalCode());
-            cityName = addresses.get(0).getLocality();
+            if (addresses.size() > 0) {   //System.out.println(addresses.get(0).getLocality());
+                // latitudeText.setText(addresses.get(0).getPostalCode());
+                cityName = addresses.get(0).getLocality();
                 postalCode = addresses.get(0).getPostalCode();
             }
         } catch (IOException e) {
