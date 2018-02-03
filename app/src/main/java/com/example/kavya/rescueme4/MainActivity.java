@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void requestPermission() {
         //Requesting permissions
-        String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION};
+        String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_PHONE_STATE};
 
         for (String permission : PERMISSIONS) {
             if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -195,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 }catch(Exception e){}
                             }
                         }
-
                         waitMsgHandler.sendEmptyMessage(0);
 
 
@@ -223,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Coordinates: " + latitude + " , " + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
                 Toast.makeText(this,"Message Sent",Toast.LENGTH_SHORT).show();
-            }
+                 }
 
 
     }
