@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
@@ -87,7 +89,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private com.google.android.gms.location.LocationListener listener;
     private long UPDATE_INTERVAL = 2 * 1000;  /* 10 sec */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
-
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,11 +116,97 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         rescueMe = (Button) findViewById(R.id.rescueMe);
         //latitudeText = (TextView) findViewById(R.id.latitudeText);
+        // ShakeDetector initialization
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake(int count) {
+				/*
+				 * The following method, "handleShakeEvent(count):" is a stub //
+				 * method you would use to setup whatever you want done once the
+				 * device has been shook.
+				 */
+                handleShakeEvent(count);
+            }
+        });
     }
+
+    private void handleShakeEvent(int count) {
+    if(count==3)
+    {
+        //if no gps
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            showAlert();
+            return;
+
+        }
+        SharedPreferences loginData = getSharedPreferences("name", Context.MODE_PRIVATE);
+        final String name = loginData.getString("name", "");
+        final String contactOne = loginData.getString("contactOne", "");
+        final String contactTwo = loginData.getString("contactTwo", "");
+        final String contactThree = loginData.getString("contactThree", "");
+        //if else
+        if (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")) {
+            //shake horizontal
+            Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+            rescueMe.startAnimation(shake);
+
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    // What do you want the thread to do
+
+
+                    while (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")){
+                        // Don't need to sync when you are not using a thread e,g, Tutorial 39
+                        synchronized(this){
+                            try {
+                                Log.i(TAG, "Thread");
+                                //wait(futureTime - System.currentTimeMillis());
+                            }catch(Exception e){}
+                        }
+                    }
+                    waitMsgHandler.sendEmptyMessage(0);
+
+
+
+                }
+            };
+
+            Thread waitThread = new Thread(r);
+            waitThread.start();
+            Toast.makeText(this,"GPS not ready. We will send it. DON'T shake again",Toast.LENGTH_SHORT).show();
+
+
+        }
+        else
+        {
+            Animation shake = AnimationUtils.loadAnimation(this, R.anim.shakey);
+            rescueMe.startAnimation(shake);
+            if (!contactOne.matches(""))
+                sendSMS(contactOne, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q="+latitude+ "," +longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+            if (!contactTwo.matches(""))
+                sendSMS(contactTwo, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q="+latitude+ "," +longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+            if (!contactThree.matches(""))
+                sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q="+latitude+ "," +longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+            Toast.makeText(this,"Message Sent",Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+    }
+
 
     public void requestPermission() {
         //Requesting permissions
-        String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_PHONE_STATE};
+        String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_PHONE_STATE};
 
         for (String permission : PERMISSIONS) {
             if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -127,7 +217,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
 
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Add the following line to register the Session Manager Listener onResume
+        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+    }
 
+    @Override
+    public void onPause() {
+        // Add the following line to unregister the Sensor Manager onPause
+        mSensorManager.unregisterListener(mShakeDetector);
+        super.onPause();
+    }
     public boolean permissionBoolean() {
         String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_COARSE_LOCATION};
 

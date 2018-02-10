@@ -48,7 +48,7 @@
             android:background="@android:color/holo_red_dark"
             android:elevation="0dp"
             android:onClick="rescueMe"
-            android:text="Rescue Me"
+            android:text="Press Me or Shake 3 Times"
             android:textSize="30sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
