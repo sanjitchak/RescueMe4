@@ -69,14 +69,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shakey);
             rescueMe.startAnimation(shake);
-            if (!contactOne.matches(""))
-                sendSMS(contactOne, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q="+latitude+ "," +longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
-            if (!contactTwo.matches(""))
-                sendSMS(contactTwo, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q="+latitude+ "," +longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+                if (!contactOne.matches(""))
+                    sendSMS(contactOne, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q=" + latitude + "," + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
-            if (!contactThree.matches(""))
-                sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q="+latitude+ "," +longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+                if (!contactTwo.matches(""))
+                    sendSMS(contactTwo, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q=" + latitude + "," + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+                if (!contactThree.matches(""))
+                    sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q=" + latitude + "," + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
             Toast.makeText(MainActivity.this,"Message Sent",Toast.LENGTH_SHORT).show();
         }
@@ -187,14 +188,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         {
             Animation shake = AnimationUtils.loadAnimation(this, R.anim.shakey);
             rescueMe.startAnimation(shake);
-            if (!contactOne.matches(""))
-                sendSMS(contactOne, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q="+latitude+ "," +longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
-            if (!contactTwo.matches(""))
-                sendSMS(contactTwo, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q="+latitude+ "," +longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+                if (!contactOne.matches(""))
+                    sendSMS(contactOne, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q=" + latitude + "," + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
-            if (!contactThree.matches(""))
-                sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q="+latitude+ "," +longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+                if (!contactTwo.matches(""))
+                    sendSMS(contactTwo, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q=" + latitude + "," + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
+
+                if (!contactThree.matches(""))
+                    sendSMS(contactThree, "Hi! This is " + name + ". " + "HELP ME!\nMy Location: https://www.google.com/maps/?q=" + latitude + "," + longitude + "\n" + "City Name: " + cityName + "\n" + "Postal Code: " + postalCode);
 
             Toast.makeText(this,"Message Sent",Toast.LENGTH_SHORT).show();
         }
