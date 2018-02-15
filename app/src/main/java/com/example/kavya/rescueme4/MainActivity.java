@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
                     while (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")){
-                        // Don't need to sync when you are not using a thread e,g, Tutorial 39
+
                         synchronized(this){
                             try {
                                 Log.i(TAG, "Thread");
