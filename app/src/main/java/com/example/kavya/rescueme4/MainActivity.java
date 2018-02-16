@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         final String contactTwo = loginData.getString("contactTwo", "");
         final String contactThree = loginData.getString("contactThree", "");
         //if else
-        if (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")) {
+        if (!permissionBoolean()|| (latitude==null || latitude.isEmpty()  ) || (longitude ==null || longitude.isEmpty() ) ) {
             //shake horizontal
             Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
             rescueMe.startAnimation(shake);
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     // What do you want the thread to do
 
 
-                    while (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")){
+                    while (!permissionBoolean()|| (latitude==null || latitude.isEmpty()  ) || (longitude ==null || longitude.isEmpty() )){
 
                         synchronized(this){
                             try {
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         final String contactTwo = loginData.getString("contactTwo", "");
         final String contactThree = loginData.getString("contactThree", "");
         //if else
-             if (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")) {
+             if (!permissionBoolean()|| (latitude==null || latitude.isEmpty()  ) || (longitude ==null || longitude.isEmpty() ) ) {
                 //shake horizontal
                 Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
                 rescueMe.startAnimation(shake);
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         // What do you want the thread to do
 
 
-                        while (!permissionBoolean()|| latitude.matches("") || longitude.matches("") || cityName.matches("") || postalCode.matches("")){
+                        while (!permissionBoolean()|| (latitude==null || latitude.isEmpty()  ) || (longitude ==null || longitude.isEmpty() ) ){
                             // Don't need to sync when you are not using a thread e,g, Tutorial 39
                             synchronized(this){
                                 try {
