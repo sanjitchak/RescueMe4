@@ -1,6 +1,7 @@
 package com.example.kavya.rescueme4;
 
 import android.*;
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -74,7 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
     public void requestPermission() {
         //Requesting permissions
-        String[] PERMISSIONS = {android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.SEND_SMS, android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.READ_PHONE_STATE};
+        String[] PERMISSIONS = {android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.SEND_SMS, android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET, android.Manifest.permission.READ_PHONE_STATE};
 
         for (String permission : PERMISSIONS) {
             if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -255,15 +256,40 @@ public void getOtp( View view)
     }
 
     public void goToMain( ) {
-        String name = loginData.getString("name", "");
-        String contactOne = loginData.getString("contactOne", "");
+        final String name = loginData.getString("name", "");
+        final String contactOne = loginData.getString("contactOne", "");
+        final String contactTwo = loginData.getString("contactTwo", "");
+        final String contactThree = loginData.getString("contactThree", "");
+           final String phone = loginData.getString("phone", "");
+        final String email = loginData.getString("email","");
 
         Intent I = new Intent(this, MainActivity.class);
         if (name.matches("") || contactOne.matches(""))
             Toast.makeText(this, "Need Name And First Contact Info", Toast.LENGTH_SHORT).show();
         else
         {
+            new Thread(new Runnable() {
 
+                public void run() {
+            try {
+                GMailSender sender = new GMailSender("rescuemeproject2018@gmail.com", "rescuemeproject2018123");
+                sender.sendMail("Your Rescue Me App Details",
+                        "Your Name: "+name+"\n"+"Your Email :"+email+"\n"+"Your Phone :"+phone+"\n"+"Your Contact One :"+contactOne+"\n"+"Your Contact Two :"+contactTwo+"\n"+"Your Contact Three :"+contactThree+"\n",
+                        "rescuemeproject2018@gmail.com",
+                        email);
+
+
+            } catch (Exception e) {
+                Log.e("SendMail", e.getMessage(), e);
+
+            }
+                }
+
+            }).start();
+
+
+
+            Toast.makeText(this,"Your App Details is being Sent to your Mail",Toast.LENGTH_LONG).show();
             startActivity(I);
         }
     }

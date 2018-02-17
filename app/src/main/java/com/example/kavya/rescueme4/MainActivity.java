@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 handleShakeEvent(count);
             }
         });
+
     }
 
     private void handleShakeEvent(int count) {
@@ -208,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void requestPermission() {
         //Requesting permissions
-        String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_PHONE_STATE};
+        String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET, Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_PHONE_STATE};
 
         for (String permission : PERMISSIONS) {
             if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
