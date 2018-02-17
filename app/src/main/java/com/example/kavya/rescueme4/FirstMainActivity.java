@@ -20,8 +20,10 @@ public class FirstMainActivity extends AppCompatActivity {
         S = new Intent(this, SettingsActivity.class);
         M = new Intent(this, MainActivity.class);
         String name = loginData.getString("name", "");
+        String email = loginData.getString("email","");
+        String phone = loginData.getString("phone","");
         String contactOne = loginData.getString("contactOne", "");
-        if(name.matches("") || contactOne.matches("") )
+        if(name.matches("") || contactOne.matches("")|| email.matches("")|| phone.matches("") )
             startActivity(S);
         else
             startActivity(M);

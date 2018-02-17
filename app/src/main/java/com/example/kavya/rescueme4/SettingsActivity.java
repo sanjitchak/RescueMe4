@@ -1,28 +1,41 @@
 package com.example.kavya.rescueme4;
 
+import android.*;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 
 import android.widget.Toast;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class SettingsActivity extends AppCompatActivity {
     private static final int PICK_CONTACT_REQUEST = 1;
     EditText userName;
+    int randomNum;
     SharedPreferences loginData;
     SharedPreferences.Editor editor;
     EditText contactOneText;
     EditText contactTwoText;
     EditText contactThreeText;
+    EditText phoneText;
+    EditText otpText;
+    EditText emailText;
     int contactType;
 
     @Override
@@ -33,21 +46,43 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         loginData = getSharedPreferences("name", Context.MODE_PRIVATE);
         userName = (EditText) findViewById(R.id.nameInput);
-
+        otpText = (EditText) findViewById(R.id.otpText);
+     phoneText = (EditText) findViewById(R.id.phoneText);
         contactOneText = (EditText) findViewById(R.id.contactOneText);
         contactTwoText = (EditText) findViewById(R.id.contactTwoText);
+        emailText = (EditText) findViewById(R.id.emailText);
         contactThreeText = (EditText) findViewById(R.id.contactThreeText);
         String contactOne = loginData.getString("contactOne", "");
         String contactTwo = loginData.getString("contactTwo", "");
         String contactThree = loginData.getString("contactThree", "");
+        String email = loginData.getString("email","");
+        String phone = loginData.getString("phone","");
         String name = loginData.getString("name","");
         userName.setText(name);
+        emailText.setText(email);
+        phoneText.setText(phone);
         contactOneText.setText(contactOne);
         contactTwoText.setText(contactTwo);
         contactThreeText.setText(contactThree);
+
         contactType = 0; //for picking contacts
 
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermission();
+        }
 
+    }
+    public void requestPermission() {
+        //Requesting permissions
+        String[] PERMISSIONS = {android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.SEND_SMS, android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.READ_PHONE_STATE};
+
+        for (String permission : PERMISSIONS) {
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        PERMISSIONS,
+                        1);
+            }
+        }
 
     }
     @Override
@@ -141,16 +176,81 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+public void getOtp( View view)
+{
+    SharedPreferences.Editor editor = loginData.edit();
+
+     randomNum = ThreadLocalRandom.current().nextInt(1000, 9998 + 1);
+
+    if(phoneText.getText().toString().isEmpty() || !phoneText.getText().toString().matches( "[2-9]{2}\\d{8}"))
+    {
+        Toast.makeText(this,"Enter Valid 10 digit number", Toast.LENGTH_LONG).show();
+
+        return;
+    }
+
+        Toast.makeText(this,"Sending OTP",Toast.LENGTH_LONG).show();
+        sendSMS(phoneText.getText().toString(), "Your 'Rescue Me' OTP is : "+randomNum);
+   editor.putString("otp",Integer.toString(randomNum));
+   editor.apply();
+
+}
+    private void sendSMS(String phoneNumber, String message) {
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(phoneNumber, null, message, null, null);
+
+    }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void saveContactsName(View view) {
-       // Toast.makeText(this, "Contacts Saved", Toast.LENGTH_SHORT).show();
         SharedPreferences.Editor editor = loginData.edit();
+
+            if(phoneText.getText().toString().isEmpty() || !phoneText.getText().toString().matches( "[2-9]{2}\\d{8}"))
+            {
+                Toast.makeText(this,"Enter Valid 10 digit number", Toast.LENGTH_LONG).show();
+
+            return;
+            }
+
+            String otpGot = loginData.getString("otp","");
+     if(otpGot.matches(""))
+     {
+         getOtp(null);
+     return;
+     }
+
+
+
+            if(!otpText.getText().toString().equals(Integer.toString(randomNum)))
+            {
+                Toast.makeText(this,"OTP Wrong or Empty ",Toast.LENGTH_LONG).show();
+                return;
+
+            }
+        if(otpText.getText().toString().isEmpty() ||  !otpText.getText().toString().equals(Integer.toString(randomNum)))
+        {
+            Toast.makeText(this,"OTP Wrong or Empty",Toast.LENGTH_LONG).show();
+            otpText.requestFocus();
+            return;
+        }
+        if(emailText.getText().toString().isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(emailText.getText().toString()).matches())
+        {
+            Toast.makeText(this,"Email Wrong or Empty",Toast.LENGTH_LONG).show();
+            emailText.requestFocus();
+            return;
+        }
+
+
         editor.putString("contactOne", contactOneText.getText().toString());
         editor.putString("contactTwo", contactTwoText.getText().toString());
         editor.putString("contactThree", contactThreeText.getText().toString());
         editor.putString("name", userName.getText().toString());
+        editor.putString("phone",phoneText.getText().toString());
+        editor.putString("email",emailText.getText().toString());
         editor.apply();
+
         goToMain( );
     }
 
@@ -160,8 +260,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         Intent I = new Intent(this, MainActivity.class);
         if (name.matches("") || contactOne.matches(""))
-            Toast.makeText(this, "Need a Name And First Contact Info", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Need Name And First Contact Info", Toast.LENGTH_SHORT).show();
         else
+        {
+
             startActivity(I);
+        }
     }
 }
