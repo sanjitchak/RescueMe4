@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
+
     }
 
     private void handleShakeEvent(int count) {
@@ -248,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         startActivity(myIntent);
-        Toast.makeText(this, "enable LOCATION, INTERNET & set to HIGH ACCURACY", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "enable LOCATION & set to HIGH ACCURACY", Toast.LENGTH_LONG).show();
 
     }
 
