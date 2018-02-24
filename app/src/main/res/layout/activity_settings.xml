@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/plus"
+
     tools:context="com.example.kavya.rescueme4.SettingsActivity"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="81dp">
@@ -128,6 +128,8 @@
                 android:id="@+id/button5"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:background="@android:color/holo_red_dark"
+                android:elevation="18dp"
                 android:onClick="saveContactsName"
                 android:text="Save or Get OTP Ist Time" />
 
@@ -135,6 +137,8 @@
                 android:id="@+id/button"
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
+                android:background="@android:color/holo_red_dark"
+                android:elevation="18dp"
                 android:onClick="getOtp"
                 android:text="Get OTP (if More required)" />
 

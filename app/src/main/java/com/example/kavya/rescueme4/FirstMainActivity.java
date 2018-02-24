@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.EditText;
 
 public class FirstMainActivity extends AppCompatActivity {
+
     EditText userName;
     SharedPreferences loginData;
     Intent S ;

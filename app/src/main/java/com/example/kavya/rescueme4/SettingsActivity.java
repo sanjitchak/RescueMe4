@@ -99,6 +99,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Intent first = new Intent(new Intent(this, FirstMainActivity.class));
+        startActivity(first);
+
         //go to HOME screen
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);
