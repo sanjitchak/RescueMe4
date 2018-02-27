@@ -42,6 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
     EditText phoneText;
     EditText otpText;
     EditText emailText;
+    MyDBHandler dbHandler;
     int contactType;
     ProgressDialog progressDialog;
 
@@ -70,11 +71,13 @@ public class SettingsActivity extends AppCompatActivity {
         userName.setText(name);
         emailText.setText(email);
         phoneText.setText(phone);
+
         contactOneText.setText(contactOne);
         contactTwoText.setText(contactTwo);
         contactThreeText.setText(contactThree);
-
         contactType = 0; //for picking contacts
+
+        dbHandler = new MyDBHandler(this, null, null, 1);
 
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -211,9 +214,14 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void sendSMS(String phoneNumber, String message) {
-        SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, message, null, null);
+       try {
+           SmsManager sms = SmsManager.getDefault();
+           sms.sendTextMessage(phoneNumber, null, message, null, null);
+       }
+           catch(Exception e)
+        {
 
+        }
     }
 
 
@@ -299,7 +307,7 @@ final String msg =  "Your Name: " + name + "\n" + "Your Email :" + email + "\n" 
 
         }).start();
 
-
+dbHandler.setDetails(name,email,phone);
 
 
             Toast.makeText(this, "Your App Details is being Sent to your Mail. Keep your mobile DATA on", Toast.LENGTH_LONG).show();
