@@ -27,6 +27,7 @@ import android.widget.EditText;
 
 import android.widget.Toast;
 
+
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -308,7 +309,6 @@ final String msg =  "Your Name: " + name + "\n" + "Your Email :" + email + "\n" 
         }).start();
 
 dbHandler.setDetails(name,email,phone);
-
 
             Toast.makeText(this, "Your App Details is being Sent to your Mail. Keep your mobile DATA on", Toast.LENGTH_LONG).show();
             startActivity(I);
