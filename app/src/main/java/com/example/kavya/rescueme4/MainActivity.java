@@ -52,6 +52,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     public static final String TAG = "somuTag";
     LocationManager manager;
+    LocationManager locationManager;
     TextView latitudeText;
     String latitude;
     String longitude;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     //gps location part
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
-    private LocationManager locationManager;
+    private LocationManager locationManacityNameger;
     private LocationRequest mLocationRequest;
     private com.google.android.gms.location.LocationListener listener;
     private long UPDATE_INTERVAL = 2 * 1000;  /* 10 sec */
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         latitude = "";
         longitude = "";
-        cityName = "";
+        cityName = "Bengaluru"; //remove
         postalCode = "";
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -431,10 +432,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (addresses.size() > 0) {   //System.out.println(addresses.get(0).getLocality());
                 // latitudeText.setText(addresses.get(0).getPostalCode());
                 cityName = addresses.get(0).getLocality();
-                if(cityName==null || cityName.isEmpty())
-                {
-                    cityName="Bengaluru";
-                }
+
                 postalCode = addresses.get(0).getPostalCode();
             }
         } catch (IOException e) {
